@@ -67,7 +67,7 @@ export default function App() {
       interval = setInterval(() => {
         i = (i + 1) % loadingMessages.length;
         setLoadingMessage(loadingMessages[i]);
-      }, 1500);
+      }, 1000); // Faster rotation
     }
     return () => clearInterval(interval);
   }, [loading]);
@@ -102,7 +102,7 @@ export default function App() {
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (count: number = 3) => {
     setLoading(true);
     setError(null);
     setScreen('results');
@@ -110,7 +110,8 @@ export default function App() {
       const results = await generateActivities({
         age, time, energy, location, effort, noSupplies, independent
       });
-      setActivities(results);
+      // If we only wanted 1, slice it (though the prompt now asks for 3, we can still slice for UI)
+      setActivities(count === 1 ? results.slice(0, 1) : results);
       setGenerationsToday(prev => prev + 1);
     } catch (e: any) {
       console.error(e);
@@ -399,13 +400,22 @@ export default function App() {
                 </button>
               </div>
 
-              <button 
-                onClick={handleGenerate}
-                className="w-full bg-brand-olive text-brand-cream py-5 rounded-3xl font-semibold text-lg shadow-xl shadow-brand-olive/20 flex items-center justify-center gap-2"
-              >
-                Generate Ideas
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              <div className="grid grid-cols-1 gap-3">
+                <button 
+                  onClick={() => handleGenerate(3)}
+                  className="w-full bg-brand-olive text-brand-cream py-5 rounded-3xl font-semibold text-lg shadow-xl shadow-brand-olive/20 flex items-center justify-center gap-2"
+                >
+                  Generate 3 Ideas
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => handleGenerate(1)}
+                  className="w-full bg-white text-brand-olive py-4 rounded-3xl font-semibold border border-brand-olive/10 flex items-center justify-center gap-2"
+                >
+                  Just 1 Quick Idea
+                  <Zap className="w-4 h-4" />
+                </button>
+              </div>
             </motion.div>
           )}
 

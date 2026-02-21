@@ -29,10 +29,10 @@ export async function generateActivities(params: {
   independent: boolean;
 }): Promise<Activity[]> {
   const ai = getAI();
-  const prompt = `Quickly generate 5 toddler activities for ${params.age}.
-    Context: ${params.time}, ${params.energy} energy, ${params.location}, ${params.effort} effort.
-    Modes: NoSupplies=${params.noSupplies}, Independent=${params.independent}.
-    JSON array: title, instructions(3-5), supplies, safety, messLevel(Low/Medium/Messy), benefit, ageGroup.`;
+  const prompt = `3 toddler activities for ${params.age}.
+    Context: ${params.time}, ${params.energy}, ${params.location}, ${params.effort}.
+    NoSupplies:${params.noSupplies}, Independent:${params.independent}.
+    JSON array: title, instructions(2-3 steps), supplies, safety, messLevel(Low/Medium/Messy), benefit, ageGroup.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -73,7 +73,7 @@ export async function generateActivities(params: {
 
 export async function generateMeltdownActivity(): Promise<Activity> {
   const ai = getAI();
-  const prompt = `Quickly generate 1 toddler meltdown calming activity. JSON: title, instructions(3), supplies, safety, messLevel, benefit, ageGroup.`;
+  const prompt = `1 toddler meltdown activity. JSON: title, instructions(2 steps), supplies, safety, messLevel, benefit, ageGroup.`;
 
   try {
     const response = await ai.models.generateContent({
