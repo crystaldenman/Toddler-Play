@@ -4,7 +4,7 @@
 @theme {
   --font-serif: "Cormorant Garamond", serif;
   --font-sans: "Inter", sans-serif;
-  
+
   --color-brand-cream: #f5f5f0;
   --color-brand-olive: #5A5A40;
   --color-brand-clay: #D4A373;
@@ -40,3 +40,43 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 24px);
 }
 
+
+html {
+  scroll-behavior: smooth;
+}
+
+.planner-hero {
+  background:
+    radial-gradient(circle at top right, rgba(212, 163, 115, 0.35), transparent 34%),
+    linear-gradient(135deg, #fff8ef 0%, #f7eadf 45%, #eef3d8 100%);
+  box-shadow: inset 0 0 0 1px rgba(90, 90, 64, 0.06);
+}
+
+.planner-hero::after {
+  content: '';
+  position: absolute;
+  width: 13rem;
+  height: 13rem;
+  right: -5rem;
+  bottom: -6rem;
+  border-radius: 999px;
+  background: rgba(204, 213, 174, 0.45);
+}
+
+.planner-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(90, 90, 64, 0.08);
+  color: var(--color-brand-olive);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.55rem 0.75rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(90, 90, 64, 0.08);
+}
+
+.planner-page {
+  position: relative;
+}
