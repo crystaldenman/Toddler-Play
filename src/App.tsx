@@ -5,32 +5,41 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Baby, 
-  Clock, 
-  Zap, 
-  MapPin, 
-  Hand, 
-  Sparkles, 
-  AlertCircle, 
-  PackageX, 
-  UserCheck, 
-  Heart, 
-  ChevronRight, 
-  X, 
-  CheckCircle2, 
+import {
+  Baby,
+  Clock,
+  Zap,
+  MapPin,
+  Hand,
+  Sparkles,
+  AlertCircle,
+  PackageX,
+  UserCheck,
+  Heart,
+  ChevronRight,
+  X,
+  CheckCircle2,
   History,
   Crown,
   Bell,
   Home,
   Calendar,
   Lock,
-  Share2
+  Share2,
+  BookOpen,
+  CheckSquare,
+  Coffee,
+  Gift,
+  ListTodo,
+  PenLine,
+  SmilePlus,
+  Star,
+  Target
 } from 'lucide-react';
 import { generateActivities, generateMeltdownActivity, Activity } from './services/geminiService';
 import { SEASONAL_PACKS, SeasonalPack } from './constants/seasonalPacks';
 
-type Screen = 'home' | 'generator' | 'results' | 'favorites' | 'meltdown' | 'settings' | 'seasonal' | 'pack-details';
+type Screen = 'home' | 'generator' | 'results' | 'favorites' | 'meltdown' | 'settings' | 'seasonal' | 'pack-details' | 'planner';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('generator');
@@ -41,7 +50,7 @@ export default function App() {
   const [effort, setEffort] = useState('moderate');
   const [noSupplies, setNoSupplies] = useState(false);
   const [independent, setIndependent] = useState(false);
-  
+
   const [activities, setActivities] = useState<Activity[]>([]);
   const [favorites, setFavorites] = useState<Activity[]>([]);
   const [selectedPack, setSelectedPack] = useState<SeasonalPack | null>(null);
@@ -188,6 +197,136 @@ export default function App() {
     </div>
   );
 
+
+  const plannerSections = [
+    { id: 'today', label: 'Today', icon: SmilePlus },
+    { id: 'week', label: 'Week', icon: Calendar },
+    { id: 'habits', label: 'Habits', icon: CheckSquare },
+    { id: 'meals', label: 'Meals', icon: Coffee },
+    { id: 'memories', label: 'Memories', icon: Star }
+  ];
+
+  const weeklyPlans = [
+    ['Mon', 'Sensory bin', 'Laundry reset'],
+    ['Tue', 'Library trip', 'Meal prep'],
+    ['Wed', 'Park morning', 'Toy rotation'],
+    ['Thu', 'Sticker art', 'Groceries'],
+    ['Fri', 'Dance party', 'Family night'],
+    ['Sat', 'Nature walk', 'Plan next week'],
+    ['Sun', 'Quiet play', 'Rest + reset']
+  ];
+
+  const PlannerCheckbox = ({ label }: { label: string }) => (
+    <label className="flex items-center gap-3 rounded-2xl bg-white/75 p-3 text-sm text-brand-olive shadow-sm border border-brand-olive/5">
+      <span className="w-5 h-5 rounded-md border-2 border-brand-clay/50 bg-brand-paper" />
+      {label}
+    </label>
+  );
+
+  const renderPlanner = () => (
+    <motion.div
+      key="planner"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="space-y-6"
+    >
+      <div className="planner-hero rounded-[2.5rem] p-7 text-brand-olive relative overflow-hidden">
+        <div className="relative z-10">
+          <p className="text-xs uppercase tracking-[0.28em] font-bold text-brand-olive/50 mb-2">Hyperlinked Happy Planner</p>
+          <h2 className="serif text-4xl leading-none mb-3">A cheerful week, all in one place.</h2>
+          <p className="text-sm text-brand-olive/70 mb-5">Tap the pastel tabs to jump between your daily page, weekly spread, habits, meals, and memory keeping.</p>
+          <div className="flex flex-wrap gap-2">
+            {plannerSections.map(({ id, label, icon: Icon }) => (
+              <a key={id} href={`#${id}`} className="planner-tab">
+                <Icon className="w-4 h-4" />
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section id="today" className="planner-page bg-white rounded-[2rem] p-6 shadow-sm border border-brand-olive/5 scroll-mt-24">
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-brand-clay font-bold">Daily Dashboard</p>
+            <h3 className="serif text-3xl text-brand-olive">Today</h3>
+          </div>
+          <PenLine className="w-7 h-7 text-brand-clay" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="rounded-2xl bg-brand-cream p-4 min-h-28">
+            <p className="text-[10px] uppercase tracking-widest text-brand-olive/40 font-bold mb-2">Top 3</p>
+            <ol className="space-y-2 text-sm text-brand-olive/70 list-decimal list-inside">
+              <li>Morning play</li>
+              <li>Snack prep</li>
+              <li>Reset toys</li>
+            </ol>
+          </div>
+          <div className="rounded-2xl bg-brand-sage/30 p-4 min-h-28">
+            <p className="text-[10px] uppercase tracking-widest text-brand-olive/40 font-bold mb-2">Appointments</p>
+            <p className="serif text-xl text-brand-olive">9:30 AM</p>
+            <p className="text-xs text-brand-olive/60">Music class</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <PlannerCheckbox label="Pack water bottle + toddler snack" />
+          <PlannerCheckbox label="15 minute parent reset" />
+          <PlannerCheckbox label="Save one favorite activity" />
+        </div>
+      </section>
+
+      <section id="week" className="planner-page bg-white rounded-[2rem] p-6 shadow-sm border border-brand-olive/5 scroll-mt-24">
+        <div className="flex items-center gap-3 mb-5">
+          <Calendar className="w-7 h-7 text-brand-clay" />
+          <div>
+            <p className="text-xs uppercase tracking-widest text-brand-clay font-bold">At-a-glance</p>
+            <h3 className="serif text-3xl text-brand-olive">Weekly Spread</h3>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {weeklyPlans.map(([day, play, homeTask]) => (
+            <div key={day} className="grid grid-cols-[3.5rem_1fr] gap-3 items-stretch">
+              <div className="rounded-2xl bg-brand-clay/20 flex items-center justify-center serif text-xl text-brand-olive">{day}</div>
+              <div className="rounded-2xl bg-brand-cream/80 p-3 text-sm text-brand-olive/75">
+                <p><span className="font-semibold text-brand-olive">Play:</span> {play}</p>
+                <p><span className="font-semibold text-brand-olive">Home:</span> {homeTask}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="habits" className="planner-page bg-white rounded-[2rem] p-6 shadow-sm border border-brand-olive/5 scroll-mt-24">
+        <div className="flex items-center gap-3 mb-5"><Target className="w-7 h-7 text-brand-clay" /><h3 className="serif text-3xl text-brand-olive">Habit Tracker</h3></div>
+        {['Outdoor time', 'Read together', 'Water', 'Tidy basket', 'Bedtime rhythm'].map((habit) => (
+          <div key={habit} className="grid grid-cols-[7rem_1fr] gap-2 items-center mb-3">
+            <span className="text-sm text-brand-olive/70">{habit}</span>
+            <div className="grid grid-cols-7 gap-1">{Array.from({ length: 7 }).map((_, i) => <span key={i} className="aspect-square rounded-lg bg-brand-sage/30 border border-brand-olive/5" />)}</div>
+          </div>
+        ))}
+      </section>
+
+      <section id="meals" className="planner-page bg-white rounded-[2rem] p-6 shadow-sm border border-brand-olive/5 scroll-mt-24">
+        <div className="flex items-center gap-3 mb-5"><ListTodo className="w-7 h-7 text-brand-clay" /><h3 className="serif text-3xl text-brand-olive">Meals + Errands</h3></div>
+        <div className="grid grid-cols-2 gap-3">
+          {['Breakfast ideas', 'Lunchbox', 'Dinner', 'Groceries'].map((title) => <div key={title} className="rounded-2xl bg-brand-cream p-4 min-h-24"><p className="font-semibold text-sm text-brand-olive mb-2">{title}</p><div className="h-px bg-brand-olive/10 mb-3" /><div className="h-px bg-brand-olive/10 mb-3" /><div className="h-px bg-brand-olive/10" /></div>)}
+        </div>
+      </section>
+
+      <section id="memories" className="planner-page bg-white rounded-[2rem] p-6 shadow-sm border border-brand-olive/5 scroll-mt-24">
+        <div className="flex items-center gap-3 mb-5"><Gift className="w-7 h-7 text-brand-clay" /><h3 className="serif text-3xl text-brand-olive">Memory Keeper</h3></div>
+        <div className="rounded-[1.5rem] border-2 border-dashed border-brand-clay/40 bg-brand-paper p-5 text-center mb-4">
+          <Star className="w-8 h-8 text-brand-clay mx-auto mb-2" />
+          <p className="serif text-2xl text-brand-olive">A tiny win from today</p>
+          <p className="text-xs text-brand-olive/50">First new word, funny quote, sweet photo, or proud parent moment.</p>
+        </div>
+        <a href="#today" className="w-full bg-brand-olive text-brand-cream py-4 rounded-3xl font-semibold flex items-center justify-center gap-2">Back to Today <ChevronRight className="w-5 h-5" /></a>
+      </section>
+    </motion.div>
+  );
+
   const SelectionCard = ({ label, icon: Icon, options, value, onChange }: any) => (
     <div className="mb-8">
       <div className="flex items-center gap-2 mb-3 px-2">
@@ -200,8 +339,8 @@ export default function App() {
             key={opt}
             onClick={() => onChange(opt)}
             className={`py-4 px-4 rounded-2xl text-sm font-medium transition-all duration-200 border ${
-              value === opt 
-                ? 'bg-brand-olive text-brand-cream border-brand-olive shadow-lg shadow-brand-olive/20' 
+              value === opt
+                ? 'bg-brand-olive text-brand-cream border-brand-olive shadow-lg shadow-brand-olive/20'
                 : 'bg-white text-brand-olive/80 border-brand-olive/10 hover:border-brand-olive/30'
             }`}
           >
@@ -231,7 +370,7 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-1 gap-4 mb-10">
-                <button 
+                <button
                   onClick={() => setScreen('generator')}
                   className="group relative overflow-hidden bg-brand-clay text-white p-8 rounded-[2rem] flex flex-col items-center justify-center gap-4 shadow-xl shadow-brand-clay/20"
                 >
@@ -243,14 +382,14 @@ export default function App() {
                 </button>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <button 
+                  <button
                     onClick={handleMeltdown}
                     className="bg-red-50 text-red-700 p-6 rounded-[2rem] flex flex-col items-center gap-2 border border-red-100"
                   >
                     <AlertCircle className="w-6 h-6" />
                     <span className="font-semibold text-sm">Meltdown Mode</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => { setIndependent(true); setScreen('generator'); }}
                     className="bg-brand-sage/30 text-brand-olive p-6 rounded-[2rem] flex flex-col items-center gap-2 border border-brand-sage/50"
                   >
@@ -259,7 +398,25 @@ export default function App() {
                   </button>
                 </div>
 
-                <button 
+
+
+                <button
+                  onClick={() => setScreen('planner')}
+                  className="bg-white border border-brand-clay/20 p-6 rounded-[2rem] flex items-center justify-between group shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-brand-clay/20 rounded-2xl flex items-center justify-center">
+                      <BookOpen className="text-brand-olive w-6 h-6" />
+                    </div>
+                    <div className="text-left">
+                      <span className="serif text-xl block text-brand-olive">Happy Planner</span>
+                      <span className="text-xs text-brand-olive/40">Hyperlinked daily, weekly & tracker pages</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-brand-olive/20 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                <button
                   onClick={() => setScreen('seasonal')}
                   className="bg-white border border-brand-olive/10 p-6 rounded-[2rem] flex items-center justify-between group"
                 >
@@ -275,7 +432,7 @@ export default function App() {
                   <ChevronRight className="w-5 h-5 text-brand-olive/20 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                <button 
+                <button
                   onClick={handleShare}
                   className="bg-brand-olive/5 border border-brand-olive/10 p-6 rounded-[2rem] flex items-center justify-between group relative"
                 >
@@ -314,6 +471,8 @@ export default function App() {
             </motion.div>
           )}
 
+          {screen === 'planner' && renderPlanner()}
+
           {screen === 'generator' && (
             <motion.div
               key="generator"
@@ -328,44 +487,44 @@ export default function App() {
                 <h2 className="serif text-2xl text-brand-olive">Customize Play</h2>
               </div>
 
-              <SelectionCard 
-                label="Age" 
-                icon={Baby} 
-                options={['12-18 months', '18-24 months', '2 years', '3 years']} 
-                value={age} 
-                onChange={setAge} 
+              <SelectionCard
+                label="Age"
+                icon={Baby}
+                options={['12-18 months', '18-24 months', '2 years', '3 years']}
+                value={age}
+                onChange={setAge}
               />
-              <SelectionCard 
-                label="Time Available" 
-                icon={Clock} 
-                options={['5 min', '10 min', '20 min', '30+ min']} 
-                value={time} 
-                onChange={setTime} 
+              <SelectionCard
+                label="Time Available"
+                icon={Clock}
+                options={['5 min', '10 min', '20 min', '30+ min']}
+                value={time}
+                onChange={setTime}
               />
-              <SelectionCard 
-                label="Energy Level" 
-                icon={Zap} 
-                options={['calm', 'medium', 'high energy']} 
-                value={energy} 
-                onChange={setEnergy} 
+              <SelectionCard
+                label="Energy Level"
+                icon={Zap}
+                options={['calm', 'medium', 'high energy']}
+                value={energy}
+                onChange={setEnergy}
               />
-              <SelectionCard 
-                label="Location" 
-                icon={MapPin} 
-                options={['indoors', 'backyard', 'park', 'car', 'public place']} 
-                value={location} 
-                onChange={setLocation} 
+              <SelectionCard
+                label="Location"
+                icon={MapPin}
+                options={['indoors', 'backyard', 'park', 'car', 'public place']}
+                value={location}
+                onChange={setLocation}
               />
-              <SelectionCard 
-                label="Parent Effort" 
-                icon={Hand} 
-                options={['very low', 'moderate', 'hands-on']} 
-                value={effort} 
-                onChange={setEffort} 
+              <SelectionCard
+                label="Parent Effort"
+                icon={Hand}
+                options={['very low', 'moderate', 'hands-on']}
+                value={effort}
+                onChange={setEffort}
               />
 
               <div className="space-y-4 mb-10">
-                <button 
+                <button
                   onClick={() => setNoSupplies(!noSupplies)}
                   className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all ${
                     noSupplies ? 'bg-brand-olive/5 border-brand-olive' : 'bg-white border-brand-olive/10'
@@ -382,7 +541,7 @@ export default function App() {
                   </div>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setIndependent(!independent)}
                   className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all ${
                     independent ? 'bg-brand-olive/5 border-brand-olive' : 'bg-white border-brand-olive/10'
@@ -401,14 +560,14 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-1 gap-3">
-                <button 
+                <button
                   onClick={() => handleGenerate(3)}
                   className="w-full bg-brand-olive text-brand-cream py-5 rounded-3xl font-semibold text-lg shadow-xl shadow-brand-olive/20 flex items-center justify-center gap-2"
                 >
                   Generate 3 Ideas
                   <ChevronRight className="w-5 h-5" />
                 </button>
-                <button 
+                <button
                   onClick={() => handleGenerate(1)}
                   className="w-full bg-white text-brand-olive py-4 rounded-3xl font-semibold border border-brand-olive/10 flex items-center justify-center gap-2"
                 >
@@ -439,7 +598,7 @@ export default function App() {
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                   <div className="w-12 h-12 border-4 border-brand-olive/20 border-t-brand-olive rounded-full animate-spin" />
-                  <motion.p 
+                  <motion.p
                     key={loadingMessage}
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -453,7 +612,7 @@ export default function App() {
                   <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                   <h3 className="serif text-xl text-red-700 mb-2">Oops!</h3>
                   <p className="text-red-600/80 text-sm mb-6">{error}</p>
-                  <button 
+                  <button
                     onClick={() => setScreen('generator')}
                     className="bg-red-600 text-white px-6 py-3 rounded-2xl font-bold text-sm"
                   >
@@ -472,12 +631,12 @@ export default function App() {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <h3 className="serif text-2xl text-brand-olive leading-tight flex-1 pr-4">{activity.title}</h3>
-                        <button 
+                        <button
                           onClick={() => toggleFavorite(activity)}
                           className="p-2"
                         >
-                          <Heart 
-                            className={`w-6 h-6 ${favorites.find(f => f.id === activity.id) ? 'text-red-500 fill-red-500' : 'text-brand-olive/20'}`} 
+                          <Heart
+                            className={`w-6 h-6 ${favorites.find(f => f.id === activity.id) ? 'text-red-500 fill-red-500' : 'text-brand-olive/20'}`}
                           />
                         </button>
                       </div>
@@ -515,8 +674,8 @@ export default function App() {
                       </div>
                     </motion.div>
                   ))}
-                  
-                  <button 
+
+                  <button
                     onClick={() => setScreen('generator')}
                     className="w-full py-4 text-brand-olive/60 font-medium flex items-center justify-center gap-2"
                   >
@@ -585,12 +744,12 @@ export default function App() {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="serif text-2xl text-brand-olive leading-tight flex-1 pr-4">{activity.title}</h3>
-                      <button 
+                      <button
                         onClick={() => toggleFavorite(activity)}
                         className="p-2"
                       >
-                        <Heart 
-                          className={`w-6 h-6 ${favorites.find(f => f.id === activity.id) ? 'text-red-500 fill-red-500' : 'text-brand-olive/20'}`} 
+                        <Heart
+                          className={`w-6 h-6 ${favorites.find(f => f.id === activity.id) ? 'text-red-500 fill-red-500' : 'text-brand-olive/20'}`}
                         />
                       </button>
                     </div>
@@ -663,7 +822,7 @@ export default function App() {
                         </button>
                       </div>
                       <p className="text-xs text-brand-olive/40 mb-4">{activity.ageGroup}</p>
-                      <button 
+                      <button
                         onClick={() => { setActivities([activity]); setScreen('results'); }}
                         className="text-brand-olive font-medium text-sm flex items-center gap-1"
                       >
@@ -694,7 +853,7 @@ export default function App() {
                 <Crown className="w-12 h-12 mb-4" />
                 <h3 className="serif text-3xl mb-2">ToddlerPlay Pro</h3>
                 <p className="text-white/80 text-sm mb-6">Unlimited generations, seasonal packs, and milestone tracking.</p>
-                
+
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="w-4 h-4" /> Unlimited daily ideas
@@ -708,7 +867,7 @@ export default function App() {
                 </ul>
 
                 {!isPremium ? (
-                  <button 
+                  <button
                     onClick={async () => {
                       await fetch('/api/user/upgrade', { method: 'POST' });
                       fetchUserStatus();
@@ -747,6 +906,10 @@ export default function App() {
         <button onClick={() => setScreen('generator')} className={`flex flex-col items-center gap-1 ${screen === 'generator' ? 'text-brand-olive' : 'text-brand-olive/30'}`}>
           <Sparkles className="w-6 h-6" />
           <span className="text-[10px] font-bold uppercase tracking-tighter">Play</span>
+        </button>
+        <button onClick={() => setScreen('planner')} className={`flex flex-col items-center gap-1 ${screen === 'planner' ? 'text-brand-olive' : 'text-brand-olive/30'}`}>
+          <BookOpen className="w-6 h-6" />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Plan</span>
         </button>
         <button onClick={handleMeltdown} className={`flex flex-col items-center gap-1 ${screen === 'meltdown' ? 'text-red-500' : 'text-brand-olive/30'}`}>
           <AlertCircle className="w-6 h-6" />
